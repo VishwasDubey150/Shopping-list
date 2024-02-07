@@ -63,7 +63,27 @@ fun ShoppingListApp(){
                 .padding(16.dp)
         ){
             items(sItems){
-                ShoppingListItem(it, {}, {})
+                item ->
+                if(item.isEditing){
+                    ShoppingItemEditor(item = item, onEditComplete ={
+                        editedname,editedquantity ->
+                        sItems=sItems.map { it.copy(isEditing = false) }
+                        val editedItem = sItems.find { it.id == item.id }
+
+                        editedItem?.let {
+                            it.name =editedname
+                            it.quantity=editedquantity
+                        }
+                    } )
+                }
+                else{
+                    ShoppingListItem(item = item, onEditClick = {
+                        sItems = sItems.map { it.copy(isEditing = it.id==item.id) }
+                    },
+                        onDeleteClick = {
+                            sItems=sItems-item
+                        })
+                }
             }
         }
     }
@@ -104,7 +124,8 @@ fun ShoppingListApp(){
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp)
+                            .padding(8.dp),
+                        label = { Text("Name of item") }
                     )
 
                     OutlinedTextField(
@@ -113,12 +134,12 @@ fun ShoppingListApp(){
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp)
+                            .padding(8.dp),
+                        label = { Text("Quantity") }
                     )
                 }
             }
         )
-
     }
 
 }
@@ -142,13 +163,17 @@ fun ShoppingItemEditor(item: ShoppingItem, onEditComplete: (String, Int) -> Unit
                 value= editedName,
                 onValueChange = {editedName = it},
                 singleLine = true,
-                modifier = Modifier.wrapContentSize().padding(8.dp)
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(8.dp)
             )
             BasicTextField(
                 value= editedQuantity,
                 onValueChange = {editedQuantity = it},
                 singleLine = true,
-                modifier = Modifier.wrapContentSize().padding(8.dp)
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(8.dp)
             )
         }
 
@@ -170,8 +195,8 @@ fun ShoppingItemEditor(item: ShoppingItem, onEditComplete: (String, Int) -> Unit
 fun ShoppingListItem(
     item: ShoppingItem,
     onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-){
+    onDeleteClick: () -> Unit)
+{
     Row(
         modifier = Modifier
             .padding(8.dp)
@@ -179,19 +204,18 @@ fun ShoppingListItem(
             .border(
                 border = BorderStroke(2.dp, Color(0XFF018786)),
                 shape = RoundedCornerShape(20)
-            )
-    ){
+            ))
+    {
         Text(text = item.name, modifier = Modifier.padding(8.dp))
         Text(text = "Qty: ${item.quantity}", modifier = Modifier.padding(8.dp))
+
         Row(modifier = Modifier.padding(8.dp)){
             IconButton(onClick = onEditClick){
                 Icon(imageVector = Icons.Default.Edit, contentDescription = null)
             }
-
             IconButton(onClick = onDeleteClick){
                 Icon(imageVector = Icons.Default.Delete, contentDescription = null)
             }
-
         }
     }
 }
