@@ -159,7 +159,7 @@ fun ShoppingItemEditor(item: ShoppingItem, onEditComplete: (String, Int) -> Unit
     )
     {
         Column {
-            BasicTextField(
+            OutlinedTextField(
                 value= editedName,
                 onValueChange = {editedName = it},
                 singleLine = true,
@@ -167,7 +167,7 @@ fun ShoppingItemEditor(item: ShoppingItem, onEditComplete: (String, Int) -> Unit
                     .wrapContentSize()
                     .padding(8.dp)
             )
-            BasicTextField(
+            OutlinedTextField(
                 value= editedQuantity,
                 onValueChange = {editedQuantity = it},
                 singleLine = true,
